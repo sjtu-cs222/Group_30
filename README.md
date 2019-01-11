@@ -13,7 +13,7 @@ This repository contains：
 
 We implement our pruning algorithm based on the **TensorFlow 1.4.1** with **CUDA 8.0**. We use **CIFAR-100** dataset and **VGG-16** network for all the experiments. Codes are available at [Github Link](https://github.com/lidongyue12138/CriticalPathPruning)  
 
-####Prerequisite
+#### Prerequisite
 
 To run our code, you have to download: 
 
