@@ -1,0 +1,13 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Background and Related work}{}% 2
+\BOOKMARK [1][-]{section.3}{Methodology}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Advantages of Channel-level Sparsity}{section.3}% 4
+\BOOKMARK [2][-]{subsection.3.2}{Channel-Wise Control Gate}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.3}{Critical Data Routing Path}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.4}{Control Gate Training}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.5}{Interpretable Customized Pruning Algorithm}{section.3}% 8
+\BOOKMARK [1][-]{section.4}{Experiment}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{Implementation Details}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{Experiment Results}{section.4}% 11
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 12
+\BOOKMARK [1][-]{section*.4}{References}{}% 13

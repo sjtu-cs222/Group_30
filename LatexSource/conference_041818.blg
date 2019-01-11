@@ -1,0 +1,64 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Cygwin)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: conference_041818.aux
+The style file: plain.bst
+Database file #1: conference_041818.bib
+Repeated entry---line 62 of file conference_041818.bib
+ : @article{yu2018distilling
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 168 of file conference_041818.bib
+ : @inproceedings{han2015learning
+ :                               ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 181 of file conference_041818.bib
+ : @article{yu2018distilling
+ :                          ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 193 of file conference_041818.bib
+ : @inproceedings{he2017channel
+ :                             ,
+I'm skipping whatever remains of this entry
+Warning--can't use both volume and number fields in he2017channel
+You've used 25 entries,
+            2118 wiz_defined-function locations,
+            619 strings with 8357 characters,
+and the built_in function-call counts, 9729 in all, are:
+= -- 922
+> -- 554
+< -- 10
++ -- 217
+- -- 192
+* -- 657
+:= -- 1581
+add.period$ -- 76
+call.type$ -- 25
+change.case$ -- 171
+chr.to.int$ -- 0
+cite$ -- 26
+duplicate$ -- 384
+empty$ -- 704
+format.name$ -- 192
+if$ -- 2058
+int.to.chr$ -- 0
+int.to.str$ -- 25
+missing$ -- 24
+newline$ -- 127
+num.names$ -- 50
+pop$ -- 205
+preamble$ -- 1
+purify$ -- 146
+quote$ -- 0
+skip$ -- 304
+stack$ -- 0
+substring$ -- 468
+swap$ -- 126
+text.length$ -- 10
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 100
+warning$ -- 1
+while$ -- 80
+width$ -- 27
+write$ -- 266
+(There were 4 error messages)

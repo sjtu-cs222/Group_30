@@ -1,0 +1,264 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{algorithmic}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{lipsum}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{algpseudocode}
+\usepackage{graphics}
+\usepackage[colorlinks,linkcolor=blue]{hyperref}
+\usepackage{epsfig}
+\newtheorem{assu}{\textbf{Assumption}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\newcommand{\sys}{Metis}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+\title{Interpretable Customized Neural Network Pruning\\
+by Identifying Critical Data Routing Path}
+
+\author{
+\IEEEauthorblockN{Dongyue Li}
+\IEEEauthorblockA{
+Shanghai Jiao Tong University\\
+Student ID: 516030910502\\
+Email: lidongyue@sjtu.edu.cn}
+\and
+\IEEEauthorblockN{Mengqi Cao}
+\IEEEauthorblockA{
+Shanghai Jiao Tong University\\
+Student ID: 516030910497\\
+Email: rogercmq@163.com}
+}
+
+\maketitle
+
+\begin{abstract}
+Convolutional neural network has achieved great success but requires tremendous computation resources. Due to the constrained computation resources, neural network compression and pruning are widely demanded currently due to the resource constraints on most deployment targets. Prior network compression and pruning methods either suffer from accuracy degradation or achieve poor acceleration. Recent work on network interpretability that critical path formed by a few class-specific neurons contribute most information for specific classes provides us new ideas to prune network. 
+
+In this paper, we propose a novel pruning method based on identifying critical data routing path in neural network and create customized models based on that. We associate control gates values with channels, train it with the idea of network distilling, and prune the network based on gate values. Experiment results show that we can achieve $98.99\%$ average accuracy for single class tasks and far above original model accuracy for multi-class tasks, and we can achieve $99\%$ pruning ratio without hurting the model performance.
+\end{abstract}
+
+\section{Introduction}
+
+Convolutional neural networks (CNN) have obtained tremendous success in recent years, achieving near-human performances on tasks such as visual recognition\cite{krizhevsky2012imagenet}, object
+detection\cite{girshick2014rich}, and semantic segmentation\cite{long2015fully}. With Large-scale
+datasets, high-end modern GPUs and new network architectures, CNN models like AlexNet\cite{krizhevsky2012imagenet}, VGGNet\cite{simonyan2014very}, GoogleNet\cite{szegedy2015going}, and ResNets\cite{he2016deep} have grown unprecedented large from several layers to over $100$ layers. However, larger CNNs require tremendous computation resources\cite{he2016deep}. This is unlikely to be affordable on resource-constrained platforms such as embedded systems, mobile devices, wearable or Internet of Things (IoT) devices. Thus, limited computation power of these devices make it difficult to deploy in real world application.
+
+Real world applications often requires customized classification models which only predict a few classes but need to be fast with constrained computation resources. Thus, the deployment of CNNs in real world applications are mostly constrained by model size, run-time memory and number of computing operations \cite{liu2017learning}. researchers have sought ways to make the model more lightweight by network pruning methods\cite{reed1993pruning, han2015learning, he2017channel} or more sparse by regularization\cite{collins2014memory, yoon2017combined}. However,
+one of the main problems of these methods is that they suffer from great accuracy degradation if the sparsity or the pruned rate of the network is overly high. Other methods including binarization\cite{rastegari2016xnor, courbariaux2017binarynet} or weight pruning \cite{han2015learning} require specially designed software/hardware accelerators for execution speed-up. Moreover, all the pruning methods ignore the customization demand of resource-constrained platforms and waste efforts in pruning model for all classes.
+
+To obtain compact customized model, we seek for interpretable pruning methods. Most works are based only on quantitative characteristics of the convolutional filters, and highly overlook the qualitative interpretation of individual filter’s specific functionality. Recent works in network interpretability\cite{qin2018interpretable} and critical path\cite{Wang_2018_CVPR, yu2018distilling} give us inspiration. Researchers have found that the neurons in higher layers of neural networks are usually specialized to encode information relevant to a subset of classification targets \cite{zhou2018revisiting, morcos2018importance}. By ablating
+certain neurons in convolutional layers, significant accuracy degradation of specific classes can be observed \cite{yosinski2015understanding}. This reveals the neuron differentiation process across multiple layers, but also reveal that the class relevant information is significantly concentrated in a few neurons\cite{yu2018distilling}. In other words, the per-class information flow is directed by a \textbf{critical path} formed by a few class-specific neurons with significant contributions. Specifically, we denote the \textbf{critical nodes} on the routing paths as the important channels of intermediate layer's output that if they were suppressed to zeros, the final test performance would deteriorate severely, which is the same definition by ablation methods. Formally, we define the \textbf{Critical Data Routing Paths (CDRP)} as the union of all the critical node routing paths for a specific target class.  
+
+In this paper, we propose a novel network pruning scheme based on identifying critical data routing path. To find critical data routing path, we implement the distillation guided routing method proposed in \cite{Wang_2018_CVPR}. Specifically, we associate a scalar control gate to each layer’s output channel to learn the optimal routing
+paths for each individual sample. We optimize the control gate values by minimizing the difference between the network output with control gates and the original model, which is inspired by the idea of knowledge distillation \cite{hinton2015distilling}. We concatenate control gates values in all layers to obtain one critical path
+representation for one sample. Large gate value implies great significance of a convolution channel, otherwise the convolution channel is less important. Since every pic has its own routing path,
+we merge all routing paths of pictures of one same class to obtain a critical path representation for one class.
+
+By identifying critical data routing paths, we find that the critical paths for different classes are co-existing but do not overlap with each other. This property of exclusiveness provides the chance to distil the critical paths and further decouple the CNN for customized prediction tasks. Therefore, we derive own interpretable customized network pruning methods. We select out the critical neurons for given classes by the value of control gates and prune out the rest unimportant neurons, which results in models for customized tasks. After pruning, the resulting network can achieve specified sparsity compared to the initial wide network.
+
+Experiments show that we can obtain very sparse pruned network with the accuracy far more better than original model. We test our pruning algorithm on VGG-16 network model. First, similar to the work in \cite{yu2018distilling}, we keep the critical path of neurons for single classes and perform one-vs-all tasks. We achieve average test accuracy $98.99\%$ which is better than the results in \cite{yu2018distilling} and we can set the pruning ratio even higher with the accuracy not degrading. Second, we create customized model for more classes, such as $5, 10, $ and $25$ classes and achieve average test accuracy $94.8\%$, $90.5\%$, and $75\%$ respectively. We also find out that with pruning ratio increased, results of out method have not degraded, thus we can achieve much higher accuracy with much higher accuracy than prior works.
+
+\section{Background and Related work}
+In \cite{CNNaccelerationICLR2017}, the authors present an acceleration method for CNNs, where they prune filters from CNNs that are identified as having a small effect on the output accuracy based on $l_1$-norm ranking. By removing whole filters in the network together with their connecting feature maps, the computation costs are reduced significantly.
+
+In \cite{Liu_2017_ICCV}, the authors propose the network slimming technique to learn more compact CNNs, which directly imposes sparsity-induced regularization on the scaling factors in batch normalization layers, and unimportant channels can thus be automatically identified during training and then pruned.
+
+In \cite{yu2018distilling}, the authors demonstrate that the filters in higher layers learn extremely task-specific features, which are exclusive for only a small subset of the overall tasks, or even a single class. Based on such findings, they propose a critical path distillation method, which adopts gradient ascent algorithm to maximize a neuron’s activation with input X. Based on previous research, in \cite{xiangchenICLR2019}, they also show that the functional repetitive filters could be effectively pruned from neural network to provide computation redundancy and propose an interpretable filter pruning method by first clustering filters with same functions together and then reducing the repetitive filters with smallest significance and contribution.
+
+In\cite{Wang_2018_CVPR}, the authors develop a Distillation Guided Routing method, which is a flexible framework to interpret a deep neural network by identifying critical data routing paths and analyzing the functional processing behavior of the corresponding layers. In terms of critical data routing path representation, they propose to discover the critical nodes on the data information flow during network inferring prediction for individual input samples by learning associated control gates for each layer’s output channel. Our pruning method is inspired by this work and we reconsider this frame in respect to the neural network partition problem.
+
+\section{Methodology}
+
+In this section, we introduce our methods of finding critical data routing path and pruning models which is inspired by \cite{Wang_2018_CVPR, Liu_2017_ICCV, he2017channel, anwar2017structured}. We first describe the advantage of channel level sparsity. Second, we describe our methods of finding critical data routing path by training scalar control gates associating with each layer’s output channel. Third, we propose our prune method base on these control gate values.
+
+\subsection{Advantages of Channel-level Sparsity}
+Network sparsity can be realized at different levels\cite{Liu_2017_ICCV}, e.g., weight-level, kernel-level, channel-level or layer-level. Fine-grained level (e.g., weight-level) sparsity gives the highest flexibility and generality leads to higher compression rate, but it usually requires special software or hardware accelerators to do fast inference on the sparsified model. On the contrary, the coarsest layer-level sparsity does not require special packages to harvest the inference speedup, while it is less flexible as some whole layers need to be pruned. In fact, removing layers is only effective when the depth is sufficiently large, e.g., more than 50 layers. In comparison, channel-level sparsity provides a nice trade-off between flexibility and ease of implementation. It can be applied to any typical CNNs or fully-connected networks (treat each neuron as a channel), and the resulting network is essentially a “thinned” version of the unpruned network, which can be efficiently inferenced on conventional CNN platforms.
+
+\subsection{Channel-Wise Control Gate}
+We introduce a channel-wise scalar $\lambda$ to identify the critical data routing paths of each given input $\bf x$. Such channel-wise scalars are expected to maximize a neuron's activation. During inference forward pass, a group of control gates $\lambda_k$ will be multiplied to the $k_{th}$ layer's channel output, resulting in actual routing nodes. Each layer's routing nodes are connected to form the routing paths. The problem of identifying the critical data routing paths reduces to optimize $\bm{\Lambda} = \{ \bm{\lambda_1, \lambda_2, ..., \lambda_K} \}$, where K corresponds to the depth of our pretrained network.
+
+For valid and reasonable critical data routing paths, we consider each $\lambda$ should satisfy these two conditions \cite{Wang_2018_CVPR}: 
+\begin{itemize}
+\item $\lambda$ is non-negative
+\item $\lambda$ should be as sparse as possible.
+\end{itemize}
+
+Denote $\bm{\Lambda ^*} = \{ \bm{\lambda_1^*, \lambda_2^*, ..., \lambda_K^*}\}$ as the optimized control gates, and the corresponding identified CDRPs can be represented by 
+\begin{equation} 
+	\bm{v = \textit{concatenate}([\lambda_1^*, \lambda_2^*, ..., \lambda_K^*}])
+\end{equation}
+
+\subsection{Critical Data Routing Path}
+
+We denote the critical nodes on the routing paths as the important channels of intermediate layer’s output that if they were suppressed to zeros, the final test performance would deteriorate severely. Specifically, we associate the scalar control gate to each layer’s output channel to learn the optimal routing paths for each individual sample. The Critical Data Routing Paths(CDRPs) can, therefore, be represented based on the responses of concatenated control gates from all the layers, which reflect the network’s semantic selectivity regarding to the input patterns and more detailed functional process across different layer levels. Interestingly, such critical data routing paths not only reflect the functional process of intermediate layers in the network, but also reflect the input data layout patterns\cite{Wang_2018_CVPR}.
+
+For image-classification tasks, critical data routing paths for single image class can be derived via merging all CDRPs of each given same-labelled input. Our present merging method is to sum up control gate values of the same-labelled input samples in the corresponding channels. As for multi-class CDPRs, we simply joint all desired single-class CDPRs.
+
+\subsection{Control Gate Training}
+
+Inspired by \cite{Wang_2018_CVPR}, we design and formulate our gate training algorithm, which is shown in Algorithm \ref{alg:Framwork}. The optimization objective for all the control gates $\bf \Lambda$ of each given input is
+\begin{equation}
+	\min_{\bm{\Lambda}} \; crossEntropy(f_{\theta}(\bm{x}),f_{\theta}(\bm{x};\bm{\Lambda}))+\gamma \sum_k |\bm{\lambda}_k|
+\end{equation}
+where the original full model prediction probability $f_{\theta}(\bm{x})=[p_1,p_2,...,p_m]$ and the new prediction probability $f_{\theta}(\bm{x};\bm{\Lambda}) = [q_1,q_2,...,q_m]$ where $m$ is the category number, and $\gamma$ is the balanced parameter. After calculating the original full model prediction probability for the given input data, the gradients for control gates are computed by
+\begin{equation}
+\frac{\partial Loss}{\partial \bm{\Lambda}} = 
+\frac{\partial \textit L}{\partial \bm{\Lambda}}+ 
+\gamma*\textup{sign}(\bm{\Lambda})
+\end{equation} 
+where $L=crossEntropy(f_{\theta}(\bm{x}),f_{\theta}(\bm{x};\bm{\Lambda}))$, which are used for performing stochastic gradient descent on control gates.
+
+\begin{algorithm}[htb] 
+	\caption{Channel-Wise Gate Training} 
+	\label{alg:Framwork} 
+	\begin{algorithmic}[1] 
+		\Require 
+			Input image $\bf x$, pretrained network $f_\theta(\cdot)$, control gates $\bf \Lambda$ initialized with $1$, balanced parameter $\gamma$. Max iterations $T$, SGD optimizer
+		\Ensure 
+			Identified CDRPs representation $v$
+		\State original prediction class $i\; \leftarrow argmax \; f_{\theta}(\bf x)$  
+		\For{$t \leftarrow 1 \; to \; T$}
+		\State Compute loss $cur\_loss$ by Equation (2);
+		\State Compute control gates gradients $\bf \Lambda$ by Equation (3); 
+		\State Update $\bf \Lambda$ by SGD optimizer and clip $\bf \Lambda$ to be non-negative; 
+		\State new prediction class $j\; \leftarrow argmax \; f_{\theta}(x;\Lambda)$;
+		\If {$i=j$}
+			\If {$cur\_loss$ is minimum}
+				\State $v \leftarrow concatenate(\bf \Lambda)$;
+			\EndIf
+		\EndIf
+		\EndFor\\
+		\Return v;
+	\end{algorithmic} 
+\end{algorithm}
+
+\subsection{Interpretable Customized Pruning Algorithm}
+Our pruning algorithm is shown in Algorithm \ref{alg:pruning}. After the input-level critical paths are derived, we merge all CDRPs of each given same-labelled input and therefore obtain class-level critical paths. For multi-class conditions, we joint all desired critical paths for each desired image class. For each channel-wise scalar in corresponding convolution layers, we sort those channel output values and proportionately remove channels with smaller $\lambda$ from the original network.  We prune channels with a global threshold across all layers, which is defined as a certain percentile of all the scaling factor values.
+\begin{algorithm}[htb] 
+	\caption{Interpretable Customized Network Pruning Algorithm} 
+	\label{alg:pruning} 
+	\begin{algorithmic}[1] 
+		\Require 
+			Input image of targeted classes $TargetImages$, pretrained network $f_\theta(\cdot)$, $prune\_ratio$
+		\Ensure 
+			Final pruned neural network model $f_{\theta^{'}}(\cdot)$
+		\State $Paths=\{\}$;
+		\For{each given training image $\bf x$ in $TargetImages$}
+			\State $Path_{\bm{x}}$ = $GateTraining(\bm{x},f_\theta(\cdot))$;
+			\State $Paths$.add($Path_{\bf x}$);
+		\EndFor
+		\State Compute class-level critical data routing path $Sum\_Path$ via merging $Paths$;
+		\For{$Sum\_Path$'s $\bm{\lambda}_k$ in the $k_{th}$ convolution layers}
+			\State sort all $\lambda$s decreasingly and remove certain channels with smaller gate values via $prune\_ratio$;
+		\EndFor
+		\State Fine-tune the pruned network and obtain $f_{\theta^{'}}(\cdot)$;
+	\end{algorithmic} 
+\end{algorithm}
+
+
+\section{Experiment}
+
+\subsection{Implementation Details}
+In this section, we implement our pruning algorithm based on the TensorFlow 1.4.1 with CUDA 8.0. We use CIFAR-100 dataset and VGG-16 network for all the experiments. Codes are available at \href{https://github.com/lidongyue12138/CriticalPathPruning}{Github Link}.
+
+\textbf{CIFAR} \; The two CIFAR datasets consist of natural images with resolution 32$\times$32. CIFAR-10 is drawn from 10 classes and CIFAR-100 from 100 classes. The train and test sets contain 50,000 and 10,000 images respectively. We report the final test accuracy after gate training or fine-tuning on all training images. The input data is normalized using channel means and standard deviations.
+
+\textbf{Pretrained Network Model} \; On CIFAR-100 dataset, we evaluate our pruning method on the VGG-16\cite{simonyan2014very}. The VGGNet is originally designed for ImageNet classification. For our experiment a variation of the original VGGNet for CIFAR dataset is taken from \href{https://github.com/BoyuanFeng/vggNet-71.56-on-CIFAR100-with-Tensorflow}{VGGNet-CIFAR}. In order to proceed the training process smoothly, we add Batch Normalization and Xavier Initialization in the origin VGG-16.
+
+In our adopted pretrained VGGNet, top-1 accuracy is 71.56\% and top-5 accuracy is 91.52\%, which achieves the best performance among available VGGNet pretrained models.
+
+\textbf{Control Gate Training} \; Before optimizing the objective in Equation (1), all control gates in $\bf \Lambda$ are initialized with 1, which activates all the nodes. After calculating the original full model’s prediction probability for the given input data $\textbf{x}$, we perform SGD on the same input $\bm{x}$ for $T=100$ iterations, with learning rate of 0.1 and L1-norm penalty of 0.03. After finishing the iterations, the optimized CDRP representation $\bm{v}$ is formed by concatenating $\bf \Lambda$, which can result in the lowest loss value while retaining the exact same top-1 prediction with the original model. We allow $\lambda$ larger than 1 to compensate the distribution variation of output channels after multiplied by control gates. 
+
+To obtain Critical Data Routing Paths for some class $k$, we collect images labelled as class $k$ in CIFAR-100 training dataset and merge their gate encodings via summing up corresponding $\lambda$ in each channel. Through similar method, we can obtain multi-class CDRPs.
+
+\textbf{Pruning} \; When we prune the channels of models trained with sparsity, a pruning threshold on the scaling factors needs to be determined. In short, we use a global pruning threshold for simplicity. The pruning threshold is determined by a percentile among all scaling factors , e.g., 60\% or 80\% channels are pruned. The pruning process is implemented by copying the corresponding weights from the model trained with sparsity and masking zeros to pruned channels so that such neurons would be inactivated during feedforwarding.
+
+We also implement our pruning method via set the pruning threshold numerically, e.g., channels with the control gate value smaller than ten are pruned, but the overall pruned ratio is unpredictable and the performance strongly depends on the domain. It means that different sub-combinations of our CIFAR100 classes lead to either expected or catastrophic performance, which is unexplainable to our knowledge.
+
+\textbf{Fine-tuning} \; After the pruning process, we obtain a narrower and more compact model, which is then fine-tuned. Since we focus on the network partition problem, we slightly change the original VGGNet architecture via changing the output dimension of the last Fully-Connected Layer into the number of our target classes. It would not have an fierce influence on the performance after fine-tuning. On CIFAR-100 datasets, the fine-tuning uses the same optimization setting as in training.
+
+\subsection{Experiment Results}
+We perform experiments on VGG-16 network for different customized network. For customization, we set the target classes of customized model with different number. First, similar to the work in \cite{yu2018distilling}, we prune the original model for   customization models of single class and perform one-vs-all tasks. The experiment results show that our pruned customized model of single classes achieve $98.99\%$ average test accuracy, which is better than the results of $98.6\%$ average True Positive rate and $11.0\%$ False Positive (FP) rate  in \cite{yu2018distilling}. Even more, we can increase the pruning ratio from $80\%$ to $99\%$ without hurting the test accuracy in contrast to the fixed $90\%$ pruning ratio in \cite{yu2018distilling}.
+
+Furthermore, we also perform our pruning methods on customized model of $5, 10, $ and $25$ classes and test the accuracy for pruning ratio of $80\%, 90\%, 95\%, $ and $99\%$. The results on CIFAR-100 are shown in Table \ref{tab:table1} and Table \ref{tab:table2}, where $pr$ refers to the hyperparameter pruned percentile, e.g. $pr=0.8$ indicates 80\% of channels are inactivated. In Table \ref{tab:table1}, we demonstrate the average accuracy of pruned customized model of $5, 10, $ and $25$ classes with pruning ratios of $80\%$ which have not been fine tuned. This results show that the accuracy degrades very much after pruning. In reality, performances are strongly
+dependent on our targeted classes. For certain targeted classes, the result can achieve above $90\%$ test accuracy. However, for some of targeted classes, the result can degrade to $0.1\%$ test accuracy, causing the average accuracy very low.
+
+\begin{table}[H]
+	\centering
+	\caption{Average Accuracy of Customized Models: Pruned but not Fine-tuned}
+	\label{tab:table1}
+    \begin{tabular}{|c|c|}
+    	\hline
+    	& pr=0.8\\ \hline
+    	number of targeted classes=5 & 0.1431\\ \hline
+    	number of targeted classes=10 & 0.5982\\ \hline
+    	number of targeted classes=25 & 0.4675\\ \hline
+    \end{tabular}
+\end{table}
+
+In Table \ref{tab:table2}, we present the results of average accuracy of pruned and fine-tuned customized model of $5, 10, $ and $25$ classes with pruning ratios of $80\%, 90\%, 95\%, $ and $99\%$. Notice that, after fine tuning, the accuracy has been improved. For customized model of $5$ classes with pruning ratio $80\%$, the average accuracy is $94.8\%$. For customized model of $10$ classes with pruning ratio $80\%$, the average accuracy is $90.5\%$. For customized model of $25$ classes with pruning ratio $80\%$, the average accuracy is $75\%$, which is still better than original model accuracy. In details, for the customized model of $25$ classes with pruning ratio $80\%$, the best accuracy we notice is above $80\%$ and the worst accuracy is $68\%$, making the average accuracy is $75\%$. Interestingly, we increase the pruning ratio later on and find out that the average accuracy haven not been hurt and remain the almost the same accuracy of pruning ratio $80\%$. This results show that pruning methods based on critical data routing path can achieve better network sparsity because the critical data routing path is relatively sparse compared to whole network model. This not only prove the existence of critical path but also offer us higher pruning ratio we can achieve, thus making the network so small that they can be deployed to resource constrained devices.
+
+\begin{table}[H]
+	\centering
+	\caption{Average Accuracy of Customized Models: Pruned and Fine-tuned}
+	\label{tab:table2}
+    \begin{tabular}{|c|c|c|c|c|}
+    	\hline
+    	& pr=0.8 & pr=0.9 & pr=0.95 & pr=0.99\\ \hline
+    	number of targeted classes=5  & 0.948 & 0.950 & 0.949 & 0.948\\ \hline
+    	number of targeted classes=10  & 0.905 & 0.897 & 0.901 & 0.902\\ \hline
+    	number of targeted classes=25  & 0.750 & 0.747 & 0.755 & 0.747\\ \hline
+    \end{tabular}
+\end{table}
+
+
+\textbf{Case Analysis} \; In this part, we randomly select 5 cases of 25 classes from the CIFAR-100 dataset and test each accuracy, which is shown in Table \ref{TableCaseAnalysis}. 
+
+First, there is no exceptional case where the pruned and fine-tuned model fails to predict, e.g. zero-accuracy cases. Second, our customized network for smaller amount of classes perform better than the baseline pretrained network. Such findings further validate that our critical data routing path method makes sense. Our pruned sub-network is more resource-saving but more effective.
+
+Second, currently, sub-network pruning is task-specific. The above result shows that the average accuracy of our pruned model for 25 classes is $0.747$ (if $pr=0.99$). However, $Case4$ is far more better than average while $Case5$ is the other way around. It indicates that the relationship between different combinations of classes and the network performance is far from totally proven. In the future we will work on that.
+
+\begin{table}[htb!]
+    \newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Case Number & Selected Classes ID & Accuracy\\
+        \hline
+        Case 1 & \tabincell{c}{1, 5, 10, 11, 12,\\ 14, 15, 17, 20, 24,\\ 27, 28, 32, 39, 44,\\ 45, 50, 59, 66, 71,\\ 76, 78, 80, 86, 94\\} & \tabincell{c}{0.735}\\
+        \hline
+        Case 2 & \tabincell{c}{11, 12, 17, 18, 20,\\ 23, 27, 34, 38, 43,\\ 45, 56, 59, 60, 63,\\ 64, 72, 77, 81, 83,\\ 88, 93, 95, 96, 98\\} & \tabincell{c}{0.775} \\
+        \hline
+        Case 3 & \tabincell{c}{2, 4, 8, 9, 11,\\ 15, 19, 20, 31, 33,\\ 47, 48, 63, 64, 68,\\ 70, 80, 81, 85, 93,\\ 94, 95, 96, 97, 99\\} & \tabincell{c}{0.745} \\
+        \hline
+        Case 4 & \tabincell{c}{0, 1, 5, 7, 15,\\ 22, 24, 25, 27, 30,\\ 31, 38, 42, 43, 46,\\ 58, 65, 71, 76, 77,\\ 80, 82, 85, 88, 91\\} & \tabincell{c}{0.8} \\
+        \hline
+        Case 5 & \tabincell{c}{2, 3, 8, 12, 14,\\ 23, 25, 43, 45, 52,\\ 59, 66, 69, 72, 73,\\ 77, 81, 82, 83, 84,\\ 85, 93, 95, 96, 99\\} & \tabincell{c}{0.685} \\
+        \hline
+    \end{tabular}
+    \caption{Case Analysis for $pr=0.99$}
+    \label{TableCaseAnalysis} 
+\end{table}
+
+\section{Conclusion}
+Neural network compression and acceleration are widely demanded currently due to the resource constraints on most deployment targets. In this work, we propose a pruning algorithm based on identifying critical data routing paths for deploying customized models to resource constraint platforms. Through experiments, the results show that our method create $98.99\%$ accuracy models for single task and achieve average test accuracy $94.8\%$, $90.5\%$, and $75\%$ for multi tasks of $5, 10 $ and $25$ classes respectively. Furthermore, our method can achieve $99\%$ pruning sparsity without hurting model performance.
+
+\bibliographystyle{plain}
+\bibliography{conference_041818}
+
+\end{document}

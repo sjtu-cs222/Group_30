@@ -1,0 +1,146 @@
+\begin{thebibliography}{10}
+
+\bibitem{anwar2017structured}
+Sajid Anwar, Kyuyeon Hwang, and Wonyong Sung.
+\newblock Structured pruning of deep convolutional neural networks.
+\newblock {\em ACM Journal on Emerging Technologies in Computing Systems
+  (JETC)}, 13(3):32, 2017.
+
+\bibitem{collins2014memory}
+Maxwell~D Collins and Pushmeet Kohli.
+\newblock Memory bounded deep convolutional networks.
+\newblock {\em arXiv preprint arXiv:1412.1442}, 2014.
+
+\bibitem{courbariaux2017binarynet}
+M~Courbariaux and Y~Bengio.
+\newblock Binarynet: Training deep neural networks with weights and activations
+  constrained to+ 1 or- 1. arxiv: 1602.02830, 2016, 2017.
+
+\bibitem{girshick2014rich}
+Ross Girshick, Jeff Donahue, Trevor Darrell, and Jitendra Malik.
+\newblock Rich feature hierarchies for accurate object detection and semantic
+  segmentation.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 580--587, 2014.
+
+\bibitem{han2015learning}
+Song Han, Jeff Pool, John Tran, and William Dally.
+\newblock Learning both weights and connections for efficient neural network.
+\newblock In {\em Advances in neural information processing systems}, pages
+  1135--1143, 2015.
+
+\bibitem{he2016deep}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun.
+\newblock Deep residual learning for image recognition.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 770--778, 2016.
+
+\bibitem{he2017channel}
+Yihui He, Xiangyu Zhang, and Jian Sun.
+\newblock Channel pruning for accelerating very deep neural networks.
+\newblock In {\em International Conference on Computer Vision (ICCV)},
+  volume~2, 2017.
+
+\bibitem{hinton2015distilling}
+Geoffrey Hinton, Oriol Vinyals, and Jeff Dean.
+\newblock Distilling the knowledge in a neural network.
+\newblock {\em arXiv preprint arXiv:1503.02531}, 2015.
+
+\bibitem{krizhevsky2012imagenet}
+Alex Krizhevsky, Ilya Sutskever, and Geoffrey~E Hinton.
+\newblock Imagenet classification with deep convolutional neural networks.
+\newblock In {\em Advances in neural information processing systems}, pages
+  1097--1105, 2012.
+
+\bibitem{CNNaccelerationICLR2017}
+Hao Li, Asim Kadav, Igor Durdanovic, Hanan Samet, and Hans~Peter Graf.
+\newblock Pruning filters for efficient convnets.
+\newblock {\em CoRR}, abs/1608.08710, 2016.
+
+\bibitem{liu2017learning}
+Zhuang Liu, Jianguo Li, Zhiqiang Shen, Gao Huang, Shoumeng Yan, and Changshui
+  Zhang.
+\newblock Learning efficient convolutional networks through network slimming.
+\newblock In {\em Computer Vision (ICCV), 2017 IEEE International Conference
+  on}, pages 2755--2763. IEEE, 2017.
+
+\bibitem{Liu_2017_ICCV}
+Zhuang Liu, Jianguo Li, Zhiqiang Shen, Gao Huang, Shoumeng Yan, and Changshui
+  Zhang.
+\newblock Learning efficient convolutional networks through network slimming.
+\newblock In {\em The IEEE International Conference on Computer Vision (ICCV)},
+  Oct 2017.
+
+\bibitem{long2015fully}
+Jonathan Long, Evan Shelhamer, and Trevor Darrell.
+\newblock Fully convolutional networks for semantic segmentation.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 3431--3440, 2015.
+
+\bibitem{morcos2018importance}
+Ari~S Morcos, David~GT Barrett, Neil~C Rabinowitz, and Matthew Botvinick.
+\newblock On the importance of single directions for generalization.
+\newblock {\em arXiv preprint arXiv:1803.06959}, 2018.
+
+\bibitem{qin2018interpretable}
+Zhuwei Qin, Fuxun Yu, Chenchen Liu, Liang Zhao, and Xiang Chen.
+\newblock Interpretable convolutional filter pruning.
+\newblock {\em arXiv preprint arXiv:1810.07322}, 2018.
+
+\bibitem{xiangchenICLR2019}
+Zhuwei Qin, Fuxun Yu, Chenchen Liu, Liang Zhao, and Xiang Chen.
+\newblock Interpretable convolutional filter pruning.
+\newblock {\em CoRR}, abs/1810.07322, 2018.
+
+\bibitem{rastegari2016xnor}
+Mohammad Rastegari, Vicente Ordonez, Joseph Redmon, and Ali Farhadi.
+\newblock Xnor-net: Imagenet classification using binary convolutional neural
+  networks.
+\newblock In {\em European Conference on Computer Vision}, pages 525--542.
+  Springer, 2016.
+
+\bibitem{reed1993pruning}
+Russell Reed.
+\newblock Pruning algorithms-a survey.
+\newblock {\em IEEE transactions on Neural Networks}, 4(5):740--747, 1993.
+
+\bibitem{simonyan2014very}
+Karen Simonyan and Andrew Zisserman.
+\newblock Very deep convolutional networks for large-scale image recognition.
+\newblock {\em arXiv preprint arXiv:1409.1556}, 2014.
+
+\bibitem{szegedy2015going}
+Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir
+  Anguelov, Dumitru Erhan, Vincent Vanhoucke, and Andrew Rabinovich.
+\newblock Going deeper with convolutions.
+\newblock In {\em Proceedings of the IEEE conference on computer vision and
+  pattern recognition}, pages 1--9, 2015.
+
+\bibitem{Wang_2018_CVPR}
+Yulong Wang, Hang Su, Bo~Zhang, and Xiaolin Hu.
+\newblock Interpret neural networks by identifying critical data routing paths.
+\newblock In {\em The IEEE Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, June 2018.
+
+\bibitem{yoon2017combined}
+Jaehong Yoon and Sung~Ju Hwang.
+\newblock Combined group and exclusive sparsity for deep neural networks.
+\newblock In {\em International Conference on Machine Learning}, pages
+  3958--3966, 2017.
+
+\bibitem{yosinski2015understanding}
+Jason Yosinski, Jeff Clune, Anh Nguyen, Thomas Fuchs, and Hod Lipson.
+\newblock Understanding neural networks through deep visualization.
+\newblock {\em arXiv preprint arXiv:1506.06579}, 2015.
+
+\bibitem{yu2018distilling}
+Fuxun Yu, Zhuwei Qin, and Xiang Chen.
+\newblock Distilling critical paths in convolutional neural networks.
+\newblock {\em arXiv preprint arXiv:1811.02643}, 2018.
+
+\bibitem{zhou2018revisiting}
+Bolei Zhou, Yiyou Sun, David Bau, and Antonio Torralba.
+\newblock Revisiting the importance of individual units in cnns via ablation.
+\newblock {\em arXiv preprint arXiv:1806.02891}, 2018.
+
+\end{thebibliography}
